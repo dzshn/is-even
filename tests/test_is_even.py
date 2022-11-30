@@ -2,14 +2,23 @@ import is_even
 import unittest
 
 
+TurboFish = __build_class__(
+    lambda: locals().update(__index__=lambda _: 0.0),
+    "::<>")
+
+if not hasattr(TurboFish, "__index__"):
+    # polyfill for <3.10
+    class TurboFish:
+        def __index__(self):
+            return 0.0
+
+
 class TestIsEven(unittest.TestCase):
     def test_implodes(self):
         with self.assertRaises(TypeError):
             is_even(0.0)
         with self.assertRaises(RuntimeError):
-            is_even(__build_class__(
-                lambda: locals().update(__index__=lambda *_: 0.0),
-                "::<>"))
+            is_even(TurboFish())
 
     def test_one_is_even(self):
         self.assertEqual(is_even(1), False)
