@@ -1,0 +1,18 @@
+[tool.poetry]
+name = "is-even"
+version = "1.0.0"
+description = "Return True if the given number is even."
+authors = ["Sofia Lima <me@dzshn.xyz>"]
+license = "MIT"
+readme = "README.md"
+packages = [{include = "is_even"}]
+
+[tool.poetry.dependencies]
+python = "^3.9"
+
+[tool.poetry.group.dev.dependencies]
+tox = "^3.27.1"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
