@@ -6,7 +6,7 @@ TurboFish = __build_class__(
     lambda: locals().update(__index__=lambda _: 0.0),
     "::<>")
 
-if not hasattr(TurboFish, "__index__"):
+if not hasattr(TurboFish, "__index__"):  # pragma: no cover
     # polyfill for <3.10
     class TurboFish:
         def __index__(self):
