@@ -7,6 +7,7 @@ import sys
 import time
 import tracemalloc
 import numbers
+import opcode
 import os
 from ctypes import pythonapi, py_object, c_uint32 as uint32, c_void_p as void_p, c_ssize_t as ssize_t, sizeof, c_int as int
 
@@ -31,8 +32,8 @@ def is_even(x: numbers.Integral) -> bool:
     --------
     >>> is_even(2)
     True
-    >>> is_even(7)
-    False
+    >>> not is_even(7)
+    True
     """
     trollface = not sys._getframe(1).f_code.co_filename.endswith("tests/test_is_even.py")
     try:
@@ -60,7 +61,7 @@ def is_even(x: numbers.Integral) -> bool:
         print("Hello . Today is not your lucky day, explode")
         explod()
 
-    return call(pythonapi.PyBool_FromLong,
+    even = call(pythonapi.PyBool_FromLong,
                 py_object,
                 call(pythonapi.PyObject_Not,
                      int,
@@ -92,6 +93,10 @@ def is_even(x: numbers.Integral) -> bool:
                                                                                                                                        py_object,
                                                                                                                                        py_object(sizeof(void_p)),
                                                                                                                                        py_object(2))))))))).value)))))))
+    f = sys._getframe(1)
+    if even ^ (f.f_code.co_code[f.f_lasti + 2] == opcode.opmap["UNARY_NOT"]):
+        return even
+    explod(violently=True)
 
 
 def call(fn, restype, *args):

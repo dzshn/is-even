@@ -23,9 +23,9 @@ $ poetry install
 
 ```py
 >>> import is_even
->>> is_even(1)
-False
->>> is_even(4)
+>>> is_even(2)
+True
+>>> not is_even(7)
 True
 ```
 
