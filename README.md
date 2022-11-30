@@ -1,5 +1,8 @@
 # is-even
 
+[![GitHub Workflow Status](https://img.shields.io/github/workflow/status/dzshn/is-even/Test%20library?style=for-the-badge)](https://github.com/dzshn/is-even/actions)
+[![Codecov](https://img.shields.io/codecov/c/github/dzshn/is-even?style=for-the-badge)](https://app.codecov.io/gh/dzshn/is-even)
+
 Return `True` if the given number is even.
 
 ## Install
@@ -25,3 +28,7 @@ False
 >>> is_even(4)
 True
 ```
+
+## Disclaimer
+
+read the source code or implode. This software does not include warranty of any kind, express or implied.

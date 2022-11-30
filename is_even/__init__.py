@@ -11,6 +11,9 @@ import os
 from ctypes import pythonapi, py_object, c_uint32 as uint32, c_void_p as void_p, c_ssize_t as ssize_t, sizeof, c_int as int
 
 
+# read if cute
+
+
 def is_even(x: numbers.Integral) -> bool:
     """Return `True` if a number is even.
 
