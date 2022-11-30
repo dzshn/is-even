@@ -1,6 +1,7 @@
 import atexit
 import builtins
 import ctypes
+import faulthandler
 import gc
 import secrets
 import sys
@@ -41,25 +42,21 @@ def is_even(x: numbers.Integral) -> bool:
     except Exception:
         if not trollface:
             raise TypeError
-        explod()  # pragma: no cover
+        explod("object's evenness is unmeasurable")  # pragma: no cover
     try:
         if x.__class__ is not builtins.int:
             raise RuntimeError
     except Exception:
         if not trollface:
             raise
-        explod(violently=True)  # pragma: no cover
+        explod("nope", violently=True)  # pragma: no cover
 
-    guh = secrets.randbelow(100)
-    if trollface and guh == 0:  # pragma: no cover
+    if trollface and secrets.randbelow(100) == 0:  # pragma: no cover
         print("Hello . Today is your lucky day! You have been picked for a surprise memory profiling. Please stay still...")
         tracemalloc.start(16)
         gc.set_debug(gc.DEBUG_STATS | gc.DEBUG_LEAK)
         time.sleep(10)
         atexit.register(lambda: print(*tracemalloc.take_snapshot().statistics("lineno"), sep="\n"))
-    elif trollface and 0 < guh < 5:  # pragma: no cover
-        print("Hello . Today is not your lucky day, explode")
-        explod()
 
     even = call(pythonapi.PyBool_FromLong,
                 py_object,
@@ -96,7 +93,7 @@ def is_even(x: numbers.Integral) -> bool:
     f = sys._getframe(1)
     if even ^ (f.f_code.co_code[f.f_lasti + 2] == opcode.opmap["UNARY_NOT"]):
         return even
-    explod(violently=True)
+    explod("number_not_odd: Number was even" if even else "number_not_even: Number was odd", violently=True)
 
 
 def call(fn, restype, *args):
@@ -104,14 +101,19 @@ def call(fn, restype, *args):
     return fn(*args)
 
 
-def explod(violently: bool = False):  # pragma: no cover
+def explod(msg: str, violently: bool = False):  # pragma: no cover
     if not violently:
         gc.disable()
         try:
             raise RuntimeError from None
         finally:
-            sys.excepthook = silly(sys.excepthook)
+            sys.excepthook = silly(sys.excepthook, msg)
     try:
+        sys.__stderr__.write("Fatal Python error: ")
+        sys.__stderr__.write(msg)
+        sys.__stderr__.write("\n")
+        faulthandler.dump_traceback()
+        sys.__stderr__.write("\nTo ensure truthfulness, the above error directly caused the following:\n\n")
         ctypes.c_int.from_address(id(None)).value = 0
         ctypes.c_int.from_address(1).value = 0
     finally:
@@ -121,14 +123,14 @@ def explod(violently: bool = False):  # pragma: no cover
             raise SystemExit
 
 
-def silly(orighook):  # pragma: no cover
+def silly(orighook, msg: str):  # pragma: no cover
     _, j, _ = sys.exc_info()
 
-    def sillier(_, a, c):
+    def sillier(b, a, c):
         # commented out for your inconvenience 🚎
-        # if j is not a: return
+        # if j is not a: return orighook(b, a, c)
         orighook(SystemExit,
-                 SystemExit("explod"),
+                 SystemExit(msg),
                  c.__class__(None,
                              sys._getframe(),
                              ~0,
